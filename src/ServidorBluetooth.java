@@ -96,6 +96,7 @@ public class ServidorBluetooth {
                     servidorBluetooth.iniciarServidor();
                 }
                 catch (IOException e){
+                    //En caso de haber una excepción o error, reiniciar el servidor
                     System.out.println(e);
                     System.out.println("Reiniciando servidor...");
                 }

@@ -43,11 +43,6 @@ public class ServidorBluetooth {
         System.out.println("\nEsperando conexión...");
         StreamConnection connection=streamConnNotifier.acceptAndOpen();
         /**
-         * Guardamos en la variable dev la información del dispositivo en caso de
-         necesitarla
-         */
-        RemoteDevice dev = RemoteDevice.getRemoteDevice(connection); 
-        /**
          * Guardamos mediante la clase InputStream de Java IO para leer
          * la información de entrada del cliente
          */
@@ -57,7 +52,6 @@ public class ServidorBluetooth {
          * posteriormente pasarlo al string con el nombre de lineaRecibida
          */
         BufferedReader bReader=new BufferedReader(new InputStreamReader(entradaCliente));
-        String lineaRecibida= bReader.readLine();
         /**
          * Cerramos la conexión entrante utilizando el método close
          */
@@ -69,10 +63,11 @@ public class ServidorBluetooth {
          *          *IMPRIMIR LA FECHA DE SALIDA O ENTRADA
         */
         /**
-         * Se vna a guardar en una variable tipo String la fecha y la hora actual
+         * Se van a guardar en una variable tipo String la fecha y la hora actual
          * al momento de hacer la firma de Entrada y de Salida
          * Para esto se crea el objeto manejoFechas usando la clase ManejoFechas.java
          */
+        String lineaRecibida= bReader.readLine();
         String fechaActual = ManejoFechas.getFechaActual();
         String horaActual = ManejoFechas.getHoraActual();
         /*
@@ -82,21 +77,28 @@ public class ServidorBluetooth {
         System.out.println(lineaRecibida + "\t" + fechaActual + "\t" + horaActual);
         /*
         EJEMPLO DE SALIDA @23-11-2013: 
-        Jorge Bustillos 	 ENTRADA	23-11-2013	06:33:27
+        2 12e45	23-11-2013	11:42:59
         */
         
     }
   
   
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException  {
     	/**
          * Repite la esucha del servidor mientras este activo el proceso, mediante
          * un bucle indeterminado.
          */
-        while(true)
-    	{       
-      ServidorBluetooth servidorBluetooth= new ServidorBluetooth();
-        servidorBluetooth.iniciarServidor();
-    	}
+        boolean repetir = true;
+                while(repetir)
+    	{ 
+                try{
+                    ServidorBluetooth servidorBluetooth= new ServidorBluetooth();
+                    servidorBluetooth.iniciarServidor();
+                }
+                catch (IOException e){
+                    System.out.println(e);
+                    System.out.println("Reiniciando servidor...");
+                }
+        }
     }
 }

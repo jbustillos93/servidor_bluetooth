@@ -63,7 +63,7 @@ public class ServidorBluetooth {
          * FALTA POR HACER:
          *          *REALIZAR LA CONEXIÓN CON MYSQL
          *          *GUARDAR LA ENTRADA O SALIDA DEPENDIENDO DEL CASO
-         *          *IMPRIMIR LA FECHA
+         *          *IMPRIMIR LA FECHA DE SALIDA O ENTRADA
         */
     }
   

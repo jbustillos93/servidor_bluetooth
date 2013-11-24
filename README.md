@@ -1,4 +1,4 @@
-justo_sierra
-============
+servidor_bluetooth
+==================
 
-Justo Sierra
+Servidor Bluetooth para la aplicación

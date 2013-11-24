@@ -7,6 +7,10 @@ import javax.bluetooth.*;
  * La clase ServidorBluetooth implementa un servidor
  * que acepta una línea enviada por un cliente bluetooth
  * y después dicha linea la guarda en una base de datos.
+ * Para la creación del servidor se utilizó la libreria BlueCove 
+ * esta proporciona una manera sencilla de establecer conexiones
+ * para Java utilizando bluetooth.
+ * http://bluecove.org/
 */
 public class ServidorBluetooth {
 
@@ -54,7 +58,6 @@ public class ServidorBluetooth {
          */
         BufferedReader bReader=new BufferedReader(new InputStreamReader(entradaCliente));
         String lineaRecibida= bReader.readLine();
-        System.out.println(lineaRecibida);
         /**
          * Cerramos la conexión entrante utilizando el método close
          */
@@ -65,11 +68,32 @@ public class ServidorBluetooth {
          *          *GUARDAR LA ENTRADA O SALIDA DEPENDIENDO DEL CASO
          *          *IMPRIMIR LA FECHA DE SALIDA O ENTRADA
         */
+        /**
+         * Se vna a guardar en una variable tipo String la fecha y la hora actual
+         * al momento de hacer la firma de Entrada y de Salida
+         * Para esto se crea el objeto manejoFechas usando la clase ManejoFechas.java
+         */
+        String fechaActual = ManejoFechas.getFechaActual();
+        String horaActual = ManejoFechas.getHoraActual();
+        /*
+        PARA PRUEBA VAMOS A SACAR EN PANTALLA EL DATO RECIBIDO 
+        POR PARTE DEL CLIENTE LA HORA Y FECHA
+        */
+        System.out.println(lineaRecibida + "\t" + fechaActual + "\t" + horaActual);
+        /*
+        EJEMPLO DE SALIDA @23-11-2013: 
+        Jorge Bustillos 	 ENTRADA	23-11-2013	06:33:27
+        */
+        
     }
   
   
     public static void main(String[] args) throws IOException {
-    	while(true)
+    	/**
+         * Repite la esucha del servidor mientras este activo el proceso, mediante
+         * un bucle indeterminado.
+         */
+        while(true)
     	{       
       ServidorBluetooth servidorBluetooth= new ServidorBluetooth();
         servidorBluetooth.iniciarServidor();

@@ -1,6 +1,13 @@
 import java.io.*;
+import java.sql.Statement;
 import javax.microedition.io.*;
 import javax.bluetooth.*;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+        
 
 
 /**
@@ -68,13 +75,35 @@ public class ServidorBluetooth {
          * Para esto se crea el objeto manejoFechas usando la clase ManejoFechas.java
          */
         String lineaRecibida= bReader.readLine();
+        String tipoFirma = lineaRecibida.substring(0, 1);
+        int intFirma = Integer.parseInt(tipoFirma);
+        String idRecibido = lineaRecibida.substring(2,7);
+        String temaRecibido = "";
+        if(intFirma == 1){
+        int sizeLinea = lineaRecibida.length();
+        temaRecibido = lineaRecibida.substring(8, sizeLinea);}
+
         String fechaActual = ManejoFechas.getFechaActual();
         String horaActual = ManejoFechas.getHoraActual();
         /*
         PARA PRUEBA VAMOS A SACAR EN PANTALLA EL DATO RECIBIDO 
         POR PARTE DEL CLIENTE LA HORA Y FECHA
         */
+        Clase_Conexion conexion = new Clase_Conexion("localhost","checador","checador","checador123");
+                java.sql.Connection cn = conexion.getConexion();
+        try {
+            java.sql.Statement st = cn.createStatement();
+            st.executeUpdate("");
+            
+        } catch (SQLException e) {
+        }
+          
+        
         System.out.println(lineaRecibida + "\t" + fechaActual + "\t" + horaActual);
+        System.out.println("Tipo de firma: "+tipoFirma + " Tamaño: "+ tipoFirma.length());
+        System.out.println("Firma de profesor: "+ idRecibido + " Tamaño:" + idRecibido.length());
+        System.out.println("Tema profesor: "+ temaRecibido + " Tamaño:" + temaRecibido.length());
+        
         /*
         EJEMPLO DE SALIDA @23-11-2013: 
         2 12e45	23-11-2013	11:42:59
@@ -97,8 +126,6 @@ public class ServidorBluetooth {
                 }
                 catch (IOException e){
                     //En caso de haber una excepción o error, reiniciar el servidor
-                    System.out.println(e);
-                    System.out.println("Reiniciando servidor...");
                 }
         }
     }

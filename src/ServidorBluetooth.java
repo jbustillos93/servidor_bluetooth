@@ -1,14 +1,15 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
-import javax.microedition.io.*;
-import javax.bluetooth.*;
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-
-
-        
+import javax.bluetooth.UUID;
+import javax.microedition.io.Connector;
+import javax.microedition.io.StreamConnection;
+import javax.microedition.io.StreamConnectionNotifier;
 
 
 /**
@@ -61,35 +62,65 @@ public class ServidorBluetooth {
          */
         BufferedReader bReader=new BufferedReader(new InputStreamReader(entradaCliente));
         /**
-         * Cerramos la conexión entrante utilizando el método close
+         * Cerramos la conexión entrante utilizando el método close.
          */
         streamConnNotifier.close();
 
         /**
-         * Se van a guardar en una variable tipo String la fecha y la hora actual
-         * al momento de hacer la firma de Entrada y de Salida
-         * Para esto se crea el objeto manejoFechas usando la clase ManejoFechas.java
+         * lineaRecibida contiene el String proveniente del cliente Bluetooth
+         * (telefono android).
          */
         String lineaRecibida= bReader.readLine();
+        /**
+         * tipoFirma contiene un string que parte del primer caracter de la 
+         * LineaRecibida
+         *          Puede tener dos valores
+         *              1 = Firma de entrada
+         *              2 = Firma de salida.
+         */        
         String tipoFirma = lineaRecibida.substring(0, 1);
+        /**
+         * intFirma contiene tipoFirma pero en tipo de dato entero.
+         */          
         int intFirma = Integer.parseInt(tipoFirma);
+        /**
+         * tipo_firma contiene una cadena correspondiente al tipo de firma 
+         *  firma de entrada o firma de salida.
+         */            
         String tipo_firma = "Firma de entrada";
-        if(intFirma ==1){
-          tipo_firma = "Firma de entrada";
-        }else{
-            if(intFirma ==2){
-          tipo_firma = "Firma de salida";
+        //Si int firma = 1: tipo_firma  = firma de entrada.
+            if(intFirma ==1){
+                tipo_firma = "Firma de entrada";
+            }else{
+            //Si int firma = 2: tipo_firma  = firma de salida.            
+              if(intFirma ==2){
+                tipo_firma = "Firma de salida";
+              }
             }
-        }
+        /**
+         * idRecibido: contiene 5 caracteres contados a partir del
+         * tercer caracter; este dato es correspondiente a la clave que
+         * envia el cliente bluetooth (telefono android).
+         */
         String idRecibido = lineaRecibida.substring(2,7);
+        //sizeLinea tiene el tamaño del String lineaRecibida
         int sizeLinea = lineaRecibida.length();
+        /**
+         * temaRecibido: contiene un string con el tema que va a firmar el 
+         * cliente bluetooth (telefono android). Se separa de la cadena 
+         * lineaRecibida a paritir del noveno caracter, y contiene n numero 
+         * de caracteres, donde n es igual a sizeLinea.
+         */
         String temaRecibido = lineaRecibida.substring(8, sizeLinea);
+        /**
+         * Utilizando la clase ManejoFechas se saca la fecha y hora actual del
+         * servidor.
+         */
         String fechaActual = ManejoFechas.getFechaActual();
         String horaActual = ManejoFechas.getHoraActual();
 
         try
         { 
-
                     java.sql.Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/checador", "checador","checador123");
                     Statement st = conexion.createStatement();
                     String consulta = "SELECT * FROM profesores WHERE `id_profesor` = '"+idRecibido+"';";
@@ -103,7 +134,6 @@ public class ServidorBluetooth {
                     }
                     rs.close();
         } catch (SQLException ex) {
-                    Logger.getLogger(ServidorBluetooth.class.getName()).log(Level.SEVERE, null, ex);
                 }        
     }
   

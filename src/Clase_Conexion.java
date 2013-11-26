@@ -11,20 +11,17 @@ import java.sql.*;
 public class Clase_Conexion {
 
     private Connection conexion=null;
-    private String servidor="";
-    private String database="";
-    private String usuario="";
-    private String password="";
-    private String url="";
+    private String servidor="127.0.0.1";
+    private String database="checador";
+    private String usuario="checador";
+    private String password="checador123";
+    private String url="jdbc:mysql://"+servidor+"/"+database;;
     
-    public Clase_Conexion(String servidor, String database, String usuario, String password){
+    public Clase_Conexion(){
         try {
 
-            this.servidor = servidor;
-            this.database = database;
 
-            Class.forName("com.mysql.jdbc.Driver");
-            url="jdbc:mysql://"+servidor+"/"+database;
+            Class.forName("com.mysql.jdbc.Driver");  
             conexion=DriverManager.getConnection(url, usuario, password);
             System.out.println("Conexion a Base de Datos "+url+" . . . . .Ok");
 

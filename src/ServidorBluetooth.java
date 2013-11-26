@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+
         
 
 
@@ -63,12 +64,7 @@ public class ServidorBluetooth {
          * Cerramos la conexión entrante utilizando el método close
          */
         streamConnNotifier.close();
-        /**
-         * FALTA POR HACER:
-         *          *REALIZAR LA CONEXIÓN CON MYSQL
-         *          *GUARDAR LA ENTRADA O SALIDA DEPENDIENDO DEL CASO
-         *          *IMPRIMIR LA FECHA DE SALIDA O ENTRADA
-        */
+
         /**
          * Se van a guardar en una variable tipo String la fecha y la hora actual
          * al momento de hacer la firma de Entrada y de Salida
@@ -77,38 +73,38 @@ public class ServidorBluetooth {
         String lineaRecibida= bReader.readLine();
         String tipoFirma = lineaRecibida.substring(0, 1);
         int intFirma = Integer.parseInt(tipoFirma);
+        String tipo_firma = "Firma de entrada";
+        if(intFirma ==1){
+          tipo_firma = "Firma de entrada";
+        }else{
+            if(intFirma ==2){
+          tipo_firma = "Firma de salida";
+            }
+        }
         String idRecibido = lineaRecibida.substring(2,7);
-        String temaRecibido = "";
-        if(intFirma == 1){
         int sizeLinea = lineaRecibida.length();
-        temaRecibido = lineaRecibida.substring(8, sizeLinea);}
-
+        String temaRecibido = lineaRecibida.substring(8, sizeLinea);
         String fechaActual = ManejoFechas.getFechaActual();
         String horaActual = ManejoFechas.getHoraActual();
-        /*
-        PARA PRUEBA VAMOS A SACAR EN PANTALLA EL DATO RECIBIDO 
-        POR PARTE DEL CLIENTE LA HORA Y FECHA
-        */
-        Clase_Conexion conexion = new Clase_Conexion("localhost","checador","checador","checador123");
-                java.sql.Connection cn = conexion.getConexion();
-        try {
-            java.sql.Statement st = cn.createStatement();
-            st.executeUpdate("");
-            
-        } catch (SQLException e) {
-        }
-          
-        
-        System.out.println(lineaRecibida + "\t" + fechaActual + "\t" + horaActual);
-        System.out.println("Tipo de firma: "+tipoFirma + " Tamaño: "+ tipoFirma.length());
-        System.out.println("Firma de profesor: "+ idRecibido + " Tamaño:" + idRecibido.length());
-        System.out.println("Tema profesor: "+ temaRecibido + " Tamaño:" + temaRecibido.length());
-        
-        /*
-        EJEMPLO DE SALIDA @23-11-2013: 
-        2 12e45	23-11-2013	11:42:59
-        */
-        
+
+        try
+        { 
+
+                    java.sql.Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/checador", "checador","checador123");
+                    Statement st = conexion.createStatement();
+                    String consulta = "SELECT * FROM profesores WHERE `id_profesor` = '"+idRecibido+"';";
+                    ResultSet rs = st.executeQuery(consulta);
+                    if(rs.next()){
+                    String nombre = rs.getString("nombre");
+                    String apellido_pat = rs.getString("apellido_pat");
+                    String apellido_mat = rs.getString("apellido_mat");
+                    String insertar ="INSERT INTO  `registros` (`nombre`, `apellido_pat`, `apellido_mat`, `tipo_firma`, `fecha`, `hora`, `tema`) VALUES ('"+nombre+"', '"+apellido_pat+"', '"+apellido_mat+"','"+tipo_firma+"', '"+fechaActual+"', '"+horaActual+"', '"+temaRecibido+"');";
+                        st.executeUpdate(insertar);
+                    }
+                    rs.close();
+        } catch (SQLException ex) {
+                    Logger.getLogger(ServidorBluetooth.class.getName()).log(Level.SEVERE, null, ex);
+                }        
     }
   
   

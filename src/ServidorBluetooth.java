@@ -10,8 +10,6 @@ import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
-
-
 /**
  * La clase ServidorBluetooth implementa un servidor
  * que acepta una línea enviada por un cliente bluetooth
@@ -121,19 +119,49 @@ public class ServidorBluetooth {
 
         try
         { 
+                    /**
+                     * Crea una conexión usando JDBC y MySQL
+                     * Statement = Para enviar comandos SQL a la base de datos, se usa la clase Statement de java
+                     * Consulta = Tiene el comando SQL para buscar dentro de la tabla profesores al profesor
+                     *            cuyo id_profesor sea igual a idRecibo
+                     * ResultSet = El ResultSet es una representación de los resultados de la consulta
+                     * rs= se llama a los resultados mediante executeQuery en donde se especifica el comando SQL a 
+                     *      utilizar, en este caso Consulta
+                     * rs.next() = va a devolver verdadero en caso de tener un resultado.         
+                     */
                     java.sql.Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/checador", "checador","checador123");
                     Statement st = conexion.createStatement();
                     String consulta = "SELECT * FROM profesores WHERE `id_profesor` = '"+idRecibido+"';";
                     ResultSet rs = st.executeQuery(consulta);
                     if(rs.next()){
-                    String nombre = rs.getString("nombre");
-                    String apellido_pat = rs.getString("apellido_pat");
-                    String apellido_mat = rs.getString("apellido_mat");
-                    String insertar ="INSERT INTO  `registros` (`nombre`, `apellido_pat`, `apellido_mat`, `tipo_firma`, `fecha`, `hora`, `tema`) VALUES ('"+nombre+"', '"+apellido_pat+"', '"+apellido_mat+"','"+tipo_firma+"', '"+fechaActual+"', '"+horaActual+"', '"+temaRecibido+"');";
+                        /**
+                         * Después de next(), el resultado recién traido está disponible en el rs
+                         * mediante el método getString(nombrecolumna) se recaba la cadena correspondiente al campo
+                         * identificado mediante la cadena nombrecolumna
+                         * es decir rs.getString("nombre"); va a devolver la cadena contenida en la columna 
+                         * nombre dentro de la base de datos profesores donde el id_profesor sea igual a idRecibido.
+                         */
+                        //Cadena nombre contiene la columna nombre de la tabla profesores
+                        String nombre = rs.getString("nombre");
+                        //Cadena apellido_pat contiene la columna apellido_pat de la tabla profesores                        
+                        String apellido_pat = rs.getString("apellido_pat");
+                        //Cadena apellido_mat contiene la columna apellido_mat de la tabla profesores                        
+                        String apellido_mat = rs.getString("apellido_mat");
+                        /**
+                         * Después de tener los datos necesarios para registrar la firma de entrada 
+                         * o de salida se va a construir el comando SQL para insertar una nueva firma
+                         * utilizando las variables construidas previamente.
+                         */
+                        String insertar ="INSERT INTO  `registros` (`nombre`, `apellido_pat`, `apellido_mat`, `tipo_firma`, `fecha`, `hora`, `tema`) VALUES ('"+nombre+"', '"+apellido_pat+"', '"+apellido_mat+"','"+tipo_firma+"', '"+fechaActual+"', '"+horaActual+"', '"+temaRecibido+"');";
+                        //Mediante el método executeUpdate() se ejecuta el comando SQL en la base de datos.
                         st.executeUpdate(insertar);
+                        //Muestra mensaje en la pantalla
+                        System.out.println("\nFirma registrada exitosamente.");
                     }
-                    rs.close();
+                    rs.close(); //Cierra los resultados
         } catch (SQLException ex) {
+            //en caso de error
+            System.out.println("\nFirma no registrada.");
                 }        
     }
   
